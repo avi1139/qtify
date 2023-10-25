@@ -2,28 +2,36 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import Navbar from "./Components/Navbar/navbar";
 import Herosection from "./Components/Herosection/herosection";
-import { fetchTopAlbums } from "./api/api";
-import Card from "./Components/Card/Card";
+import Section from "./Components/Section/Section";
+import { fetchTopAlbums, fetchNewAlbums, fetchSongs } from "./api/api";
+import styles from "./App.module.css";
 
 const App = () => {
-  const [topAlbumsData, setTopAlbumsData] = useState([]);
+  const [topAlbums, setTopAlbums] = useState([]);
+  const [newAlbums, setNewAlbums] = useState([]);
+  const [songs, setSongs] = useState([]);
 
-  const generateTopAlbumsData = async () => {
-    const data = await fetchTopAlbums();
-    setTopAlbumsData(data);
+  const generatedata = async () => {
+    setTopAlbums(await fetchTopAlbums());
+    setNewAlbums(await fetchNewAlbums());
+    setSongs(await fetchSongs());
   };
 
   useEffect(() => {
-    generateTopAlbumsData();
+    generatedata();
   }, []);
 
   return (
-    <div>
-      <Navbar />
+    <div className={styles.app}>
+      <Navbar songs={songs} />
       <Herosection />
-      {topAlbumsData.map((item) => {
-        return <Card data={item} type="album" />;
-      })}
+      <div style={{ marginBottom: "30px" }}>
+        <Section data={topAlbums} title="Top Albums" />
+      </div>
+      <div style={{ marginBottom: "30px" }}>
+        <Section data={newAlbums} title="New Albums" />
+      </div>
+      <hr className={styles.divider} />
     </div>
   );
 };
